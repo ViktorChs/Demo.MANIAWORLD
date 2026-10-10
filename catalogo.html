@@ -3863,6 +3863,49 @@
             });
 
             syncRangeUI();
+
+            (function () {
+                var p = new URLSearchParams(location.search).get('cat');
+                if (!p) return;
+                var map = {
+                    "Procesadores": "Componentes",
+                    "Tarjetas Madre": "Componentes",
+                    "Tarjetas de Video": "Componentes",
+                    "Memorias Ram": "Componentes",
+                    "Discos Externos": "Componentes",
+                    "Fuentes de Poder": "Componentes",
+                    "Cases": "Componentes",
+                    "Equipos Repotenciados": "Computadoras",
+                    "Periféricos y Gaming": "Periféricos",
+                    "Teclados": "Periféricos",
+                    "Mouses": "Periféricos",
+                    "Kit Teclado + Mouse": "Periféricos",
+                    "Audífonos": "Periféricos",
+                    "Micrófonos": "Periféricos",
+                    "Controles": "Periféricos",
+                    "Sillas Gamer": "Periféricos",
+                    "Laptops": "Laptops",
+                    "Computadoras": "Computadoras",
+                    "Monitores": "Computadoras",
+                    "Audio": "Periféricos",
+                    "Router": "Componentes",
+                    "Cargadores": "Componentes",
+                    "UPS / Respaldo Eléctrico": "Componentes",
+                    "Camaras de Seguridad": "Componentes",
+                    "Impresoras": "Impresión",
+                    "Accesorios": "Componentes"
+                };
+                var v = map[p] || p;
+                var valid = Array.prototype.some.call(catSel.options, function (o) { return o.value === v; });
+                if (!valid) return;
+                state.cat = v;
+                catSel.value = v;
+                resetPage();
+                apply();
+                var cr = document.querySelector('.cr');
+                if (cr) cr.scrollIntoView({ behavior: 'auto', block: 'start' });
+            })();
+
             apply();
         })();
     </script>

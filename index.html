@@ -1956,7 +1956,7 @@
         const loopCategories = [...categories, ...categories];
         loopCategories.forEach(cat => {
             const item = document.createElement('a');
-            item.href = `#${cat.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+            item.href = 'catalogo.html?cat=' + encodeURIComponent(cat.name);
             item.className = 'category-card flex flex-col items-center justify-center p-4 text-center';
             item.innerHTML = `
                 <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/60 border border-gray-100 flex items-center justify-center text-purple-600 shadow-sm mb-3 pointer-events-none">
