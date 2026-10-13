@@ -1072,6 +1072,212 @@
             .pm-fav.pop svg { animation: none; }
         }
     </style>
+    <style>
+        /* ===== Combos (slider) ===== */
+        .combo-slider { position: relative; display: flex; align-items: center; gap: 8px; }
+        .combo-viewport {
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            padding: 4px 2px 10px;
+        }
+        .combo-viewport.is-scrolling { scroll-behavior: auto; }
+        .combo-track { display: flex; gap: 16px; padding: 6px 2px; }
+        .combo-card {
+            position: relative;
+            flex: 0 0 auto;
+            width: 86%;
+            scroll-snap-align: start;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(229, 231, 235, 0.9);
+            border-radius: 1.5rem;
+            padding: 16px 16px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .combo-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(circle 140px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(168, 85, 247, 0.28), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .combo-card:hover::before { opacity: 1; }
+        .combo-card:hover { border-color: rgba(168, 85, 247, 0.6); transform: translateY(-4px); box-shadow: 0 15px 35px rgba(168, 85, 247, 0.18); }
+        .combo-card > * { position: relative; z-index: 1; }
+        .combo-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+        .combo-cpu { display: flex; flex-direction: column; line-height: 1.05; }
+        .combo-cpu-line1 { font-size: 16px; font-weight: 800; color: #111827; letter-spacing: -0.01em; }
+        .combo-cpu-line2 { font-size: 14px; font-weight: 700; color: #7c3aed; margin-top: 1px; }
+        .combo-tag {
+            flex-shrink: 0;
+            font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+            color: #7c3aed; background: #f5f3ff; border: 1px solid #ede9fe;
+            padding: 3px 9px; border-radius: 999px;
+        }
+        .combo-main { display: flex; align-items: center; gap: 14px; }
+        .combo-imgwrap {
+            position: relative;
+            flex: 0 0 auto;
+            width: 44%;
+            max-width: 190px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .combo-imgwrap img { width: 100%; height: 100%; object-fit: contain; }
+        .combo-imgwrap img.combo-extra {
+            position: absolute;
+            right: -6%;
+            bottom: -2%;
+            width: 58%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.18));
+            pointer-events: none;
+        }
+        .combo-specs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-width: 0; }
+        .combo-specs li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: #374151; overflow-wrap: anywhere; }
+        .combo-specs li::before { content: ''; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 999px; background: #a855f7; }
+        .combo-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 12px; border-top: 1px solid #f1f2f4; }
+        .combo-price { font-size: 18px; font-weight: 800; color: #111827; }
+        .combo-add {
+            width: 38px; height: 38px; flex-shrink: 0;
+            border-radius: 999px; border: 0; cursor: pointer;
+            background: #f5f3ff; color: #7c3aed;
+            display: flex; align-items: center; justify-content: center;
+            transition: background-color 0.18s ease, color 0.18s ease, transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .combo-add:hover { background: #7c3aed; color: #fff; }
+        .combo-add:active { transform: scale(0.92); }
+        .combo-add svg { width: 18px; height: 18px; }
+        .combo-nav {
+            flex: 0 0 auto;
+            width: 42px; height: 42px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            background: rgba(255, 255, 255, 0.95);
+            color: #374151;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            transition: background-color 0.18s ease, color 0.18s ease, opacity 0.18s ease, transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 2;
+        }
+        .combo-nav:hover { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+        .combo-nav:active { transform: scale(0.92); }
+        .combo-nav[disabled] { opacity: 0.3; cursor: default; pointer-events: none; }
+        .combo-nav svg { width: 20px; height: 20px; }
+        .combo-slider.is-static .combo-nav,
+        .combo-slider.is-static .combo-dots { display: none; }
+        .combo-dots { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
+        .combo-dot {
+            width: 8px; height: 8px; padding: 0;
+            border-radius: 999px; border: 0; cursor: pointer;
+            background: #d8dbe0;
+            transition: width 0.22s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.22s ease;
+        }
+        .combo-dot.is-active { width: 22px; background: #7c3aed; }
+
+        /* ===== Combo modal ===== */
+        .cm-cpu { display: flex; flex-direction: column; line-height: 1.05; margin-bottom: 8px; }
+        .cm-cpu1 { font-size: 18px; font-weight: 800; color: #111827; letter-spacing: -0.01em; }
+        .cm-cpu2 { font-size: 15px; font-weight: 700; color: #7c3aed; margin-top: 1px; }
+        .pm-media img.cm-media-extra {
+            position: absolute;
+            right: 5%;
+            bottom: 7%;
+            width: 38%;
+            height: auto;
+            padding: 0;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.22));
+            pointer-events: none;
+        }
+        .cm-includes { margin-top: 18px; }
+        .cm-includes h4 { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0 0 10px; }
+        .cm-includes ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+        .cm-includes li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #374151; }
+        .cm-includes li svg { width: 16px; height: 16px; flex-shrink: 0; color: #7c3aed; }
+        @media (max-width: 639.98px) {
+            .combo-card { width: 90%; }
+            .combo-track { gap: 12px; }
+            .combo-nav { width: 36px; height: 36px; }
+            .combo-nav svg { width: 18px; height: 18px; }
+            .combo-imgwrap { width: 40%; }
+            .combo-price { font-size: 16px; }
+        }
+        @media (min-width: 640px) { .combo-card { width: 46%; } }
+        @media (min-width: 1024px) { .combo-card { width: 31%; } }
+        @media (prefers-reduced-motion: reduce) {
+            .combo-viewport { scroll-behavior: auto; }
+            .combo-card, .combo-card::before, .combo-add, .combo-nav, .combo-dot { transition: none; }
+            .combo-card:hover { transform: none; }
+        }
+
+        /* ===== Product modal: pantalla completa + ruta de categoria ===== */
+        .pm-overlay { padding: 0; align-items: stretch; justify-content: stretch; }
+        .pm-stage { max-width: none; width: 100%; height: 100%; }
+        .pm-modal { display: flex; flex-direction: column; border-radius: 0; box-shadow: none; }
+        .pm-crumbs {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            min-height: 50px;
+            padding: 13px 62px 13px 18px;
+            border-bottom: 1px solid #eef0f3;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .pm-crumb-cat { color: #7c3aed; font-weight: 800; }
+        .pm-crumb-sub { color: #6d28d9; font-weight: 700; }
+        .pm-crumb-sep { color: #c7cad1; }
+        .pm-crumb-current { color: #111827; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+        .pm-grid { flex: 1 1 auto; min-height: 0; height: auto; }
+        @media (min-width: 1280px) {
+            .pm-crumbs { font-size: 13px; min-height: 58px; padding: 16px 64px 16px 30px; }
+            .pm-info { padding: 30px 42px 42px; }
+            .pm-kicker { font-size: 11px; }
+            .pm-title { font-size: 1.6rem; }
+            .pm-sub { font-size: 14.5px; }
+            .pm-price-label { font-size: 11px; }
+            .pm-price { font-size: 2.3rem; }
+            .pm-switch-btn { font-size: 13px; }
+            .pm-rate { font-size: 12px; }
+            .pm-btn { font-size: 15px; }
+            .pm-buy { padding: 15px 22px; }
+            .pm-share { padding: 15px 20px; }
+            .pm-acc-head { font-size: 14.5px; padding: 16px 0; }
+            .pm-text { font-size: 15px; }
+            .pm-specs > div { font-size: 14.5px; padding: 12px 0; }
+            .pm-badge { font-size: 11px; padding: 5px 12px; }
+            .pm-close { top: 16px; right: 16px; width: 44px; height: 44px; }
+        }
+        @media (min-width: 1650px) {
+            .pm-crumbs { font-size: 14px; }
+            .pm-info { padding: 40px 58px 54px; }
+            .pm-title { font-size: 1.9rem; }
+            .pm-sub { font-size: 16px; }
+            .pm-price { font-size: 2.7rem; }
+            .pm-btn { font-size: 16px; }
+            .pm-acc-head { font-size: 15.5px; }
+            .pm-text { font-size: 16px; }
+            .pm-specs > div { font-size: 15.5px; padding: 13px 0; }
+        }
+    </style>
 </head>
 <body id="inicio" class="w-full relative" style="scroll-padding-top: 5rem;">
 
@@ -1173,6 +1379,145 @@
         </div>
     </nav>
 
+    <!-- Combos Section -->
+    <section id="combos" class="py-8 px-0 sm:px-8 sm:py-16 bg-white/80 backdrop-blur-md border-t border-gray-200 relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col items-center mb-6 sm:mb-10 text-center px-4">
+                <span class="text-purple-600 font-bold text-xs uppercase tracking-widest mb-2 bg-purple-50 px-3 py-1 rounded-full border border-purple-100">Arma y ahorra</span>
+                <h3 class="text-xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Combos GigaHertz</h3>
+                <p class="text-gray-500 text-sm mt-1 max-w-md">Equipos listos para jugar y trabajar. Elige el tuyo y llévalo completo.</p>
+            </div>
+
+            <div class="px-2 sm:px-0">
+                <div class="combo-slider">
+                    <button class="combo-nav combo-prev" type="button" aria-label="Anterior" title="Anterior">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+
+                    <div class="combo-viewport no-scrollbar" id="comboViewport">
+                        <div class="combo-track" id="comboTrack">
+                            <!-- Combo 1 -->
+                            <article class="combo-card" data-name="Combo Gamer Intel i5" data-price="499" data-img="case1.webp" data-cat="Combos" data-subcat="PC de Escritorio">
+                                <div class="combo-top">
+                                    <div class="combo-cpu">
+                                        <span class="combo-cpu-line1">Intel Core</span>
+                                        <span class="combo-cpu-line2">i5 - 7Gen</span>
+                                    </div>
+                                    <span class="combo-tag">Combo</span>
+                                </div>
+                                <div class="combo-main">
+                                    <div class="combo-imgwrap">
+                                        <img class="combo-case" src="case1.webp" alt="Gabinete del combo" onerror="this.onerror=null;this.src='https://placehold.co/600x600/f9fafb/7c3aed?text=Gabinete';">
+                                    </div>
+                                    <ul class="combo-specs">
+                                        <li>12GB DDR4</li>
+                                        <li>256GB SSD M.2</li>
+                                        <li>GTX 1660 Super</li>
+                                    </ul>
+                                </div>
+                                <div class="combo-foot">
+                                    <span class="combo-price">$499.00</span>
+                                    <button class="combo-add" type="button" title="Agregar al carrito" aria-label="Agregar al carrito">
+                                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                    </button>
+                                </div>
+                            </article>
+
+                            <!-- Combo 2 -->
+                            <article class="combo-card" data-name="Combo Ryzen 5" data-price="649" data-img="case2.webp" data-cat="Combos" data-subcat="PC de Escritorio">
+                                <div class="combo-top">
+                                    <div class="combo-cpu">
+                                        <span class="combo-cpu-line1">AMD Ryzen</span>
+                                        <span class="combo-cpu-line2">5 - 5600G</span>
+                                    </div>
+                                    <span class="combo-tag">Combo</span>
+                                </div>
+                                <div class="combo-main">
+                                    <div class="combo-imgwrap">
+                                        <img class="combo-case" src="case2.webp" alt="Gabinete del combo" onerror="this.onerror=null;this.src='https://placehold.co/600x600/f9fafb/7c3aed?text=Gabinete';">
+                                    </div>
+                                    <ul class="combo-specs">
+                                        <li>16GB DDR4</li>
+                                        <li>512GB SSD M.2</li>
+                                        <li>RTX 3050</li>
+                                    </ul>
+                                </div>
+                                <div class="combo-foot">
+                                    <span class="combo-price">$649.00</span>
+                                    <button class="combo-add" type="button" title="Agregar al carrito" aria-label="Agregar al carrito">
+                                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                    </button>
+                                </div>
+                            </article>
+
+                            <!-- Combo 3 -->
+                            <article class="combo-card" data-name="Combo Intel i7 DDR5" data-price="949" data-img="case3.webp" data-cat="Combos" data-subcat="PC de Escritorio">
+                                <div class="combo-top">
+                                    <div class="combo-cpu">
+                                        <span class="combo-cpu-line1">Intel Core</span>
+                                        <span class="combo-cpu-line2">i7 - 12Gen</span>
+                                    </div>
+                                    <span class="combo-tag">Combo</span>
+                                </div>
+                                <div class="combo-main">
+                                    <div class="combo-imgwrap">
+                                        <img class="combo-case" src="case3.webp" alt="Gabinete del combo" onerror="this.onerror=null;this.src='https://placehold.co/600x600/f9fafb/7c3aed?text=Gabinete';">
+                                    </div>
+                                    <ul class="combo-specs">
+                                        <li>16GB DDR5</li>
+                                        <li>1TB SSD M.2</li>
+                                        <li>RTX 4060</li>
+                                    </ul>
+                                </div>
+                                <div class="combo-foot">
+                                    <span class="combo-price">$949.00</span>
+                                    <button class="combo-add" type="button" title="Agregar al carrito" aria-label="Agregar al carrito">
+                                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                    </button>
+                                </div>
+                            </article>
+
+                            <!-- Combo 4 -->
+                            <article class="combo-card" data-name="Combo Ryzen 7 Pro" data-price="1399" data-img="case4.webp" data-cat="Combos" data-subcat="PC de Escritorio">
+                                <div class="combo-top">
+                                    <div class="combo-cpu">
+                                        <span class="combo-cpu-line1">AMD Ryzen</span>
+                                        <span class="combo-cpu-line2">7 - 7800X3D</span>
+                                    </div>
+                                    <span class="combo-tag">Combo</span>
+                                </div>
+                                <div class="combo-main">
+                                    <div class="combo-imgwrap">
+                                        <img class="combo-case" src="case4.webp" alt="Gabinete del combo" onerror="this.onerror=null;this.src='https://placehold.co/600x600/f9fafb/7c3aed?text=Gabinete';">
+                                        <img class="combo-extra" src="img/p-4.png" alt="Incluye monitor" onerror="this.onerror=null;this.src='https://placehold.co/300x300/f9fafb/7c3aed?text=Monitor';">
+                                    </div>
+                                    <ul class="combo-specs">
+                                        <li>Monitor 24" 165Hz</li>
+                                        <li>32GB DDR5</li>
+                                        <li>1TB SSD M.2</li>
+                                        <li>RTX 4070 Super</li>
+                                    </ul>
+                                </div>
+                                <div class="combo-foot">
+                                    <span class="combo-price">$1,399.00</span>
+                                    <button class="combo-add" type="button" title="Agregar al carrito" aria-label="Agregar al carrito">
+                                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                    </button>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
+                    <button class="combo-nav combo-next" type="button" aria-label="Siguiente" title="Siguiente">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+
+                <div class="combo-dots" id="comboDots" role="tablist" aria-label="Combos"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Products Section (25 Products) -->
     <div id="productos" class="scroll-mt-20"></div>
     <section id="lo-mas-vendido" class="py-8 px-0 sm:px-8 sm:py-16 bg-white/80 backdrop-blur-md border-t border-gray-200 relative z-20">
@@ -1185,7 +1530,7 @@
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6 px-2 sm:px-0">
                 <!-- Product 1 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Tarjetas de Video">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-1.png" alt="Tarjeta Gráfica RTX 4070" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1203,7 +1548,7 @@
                 </div>
 
                 <!-- Product 2 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Procesadores">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-2.png" alt="Procesador AMD Ryzen 7" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1221,7 +1566,7 @@
                 </div>
 
                 <!-- Product 3 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Teclados">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-3.png" alt="Teclado Mecánico RGB Pro" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1239,7 +1584,7 @@
                 </div>
 
                 <!-- Product 4 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras" data-subcat="Monitores">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-4.png" alt="Monitor Gamer Curvo 27" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1257,7 +1602,7 @@
                 </div>
 
                 <!-- Product 5 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Audífonos">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-5.png" alt="Audífonos Gamer 7.1" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1275,7 +1620,7 @@
                 </div>
 
                 <!-- Product 6 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Tarjetas de Video">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/ZOTAC_Gaming%27s_GeForce_RTX_50_Series_Graphics_Carda.jpg/500px-ZOTAC_Gaming%27s_GeForce_RTX_50_Series_Graphics_Carda.jpg" alt="RTX 4060 Ti" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1290,7 +1635,7 @@
                 </div>
 
                 <!-- Product 7 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Procesadores">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-7.png" alt="Core i7-14700K" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1305,7 +1650,7 @@
                 </div>
 
                 <!-- Product 8 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Tarjetas Madre Intel">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-8.png" alt="Z790 Motherboard" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1320,7 +1665,7 @@
                 </div>
 
                 <!-- Product 9 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Memorias Ram DDR5">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-9.avif" alt="RAM 32GB" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1335,7 +1680,7 @@
                 </div>
 
                 <!-- Product 10 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="SSD M.2">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Samsung_980_PRO_PCIe_4.0_NVMe_SSD_1TB-top_PNr%C2%B00915.jpg/500px-Samsung_980_PRO_PCIe_4.0_NVMe_SSD_1TB-top_PNr%C2%B00915.jpg" alt="SSD 2TB" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1350,7 +1695,7 @@
                 </div>
 
                 <!-- Product 11 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Fuentes de Poder">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-11.png" alt="PSU 850W" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1365,7 +1710,7 @@
                 </div>
 
                 <!-- Product 12 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Cases">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-12.png" alt="Case Lian Li" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1380,7 +1725,7 @@
                 </div>
 
                 <!-- Product 13 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Enfriamiento">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-13.webp" alt="Enfriamiento Líquido" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1395,7 +1740,7 @@
                 </div>
 
                 <!-- Product 14 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Mouses">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-14.png" alt="Mouse Superlight" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1410,7 +1755,7 @@
                 </div>
 
                 <!-- Product 15 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Sillas Gamer">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-15.png" alt="Silla Gamer" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1425,7 +1770,7 @@
                 </div>
 
                 <!-- Product 16 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Laptops" data-subcat="Laptops">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-16.png" alt="Laptop Gamer" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1440,7 +1785,7 @@
                 </div>
 
                 <!-- Product 17 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras" data-subcat="Monitores">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-17.avif" alt="Monitor 24" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1455,7 +1800,7 @@
                 </div>
 
                 <!-- Product 18 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Micrófonos">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Blue_Yeti_Blackout_USB_microphone_%2851844234538%29.jpg/500px-Blue_Yeti_Blackout_USB_microphone_%2851844234538%29.jpg" alt="QuadCast S" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1470,7 +1815,7 @@
                 </div>
 
                 <!-- Product 19 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Controles/Volantes">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-19.png" alt="Control Xbox" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1485,7 +1830,7 @@
                 </div>
 
                 <!-- Product 20 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión" data-subcat="Router y Mesh">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-20.png" alt="Router WiFi 6" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1500,7 +1845,7 @@
                 </div>
 
                 <!-- Product 21 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras" data-subcat="UPS / Respaldo Eléctrico">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-21.png" alt="UPS 1500VA" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1515,7 +1860,7 @@
                 </div>
 
                 <!-- Product 22 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Webcam">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-22.png" alt="Webcam C920" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1530,7 +1875,7 @@
                 </div>
 
                 <!-- Product 23 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión" data-subcat="Impresoras">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-23.png" alt="Impresora EcoTank" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1545,7 +1890,7 @@
                 </div>
 
                 <!-- Product 24 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión" data-subcat="Accesorios">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="https://live.staticflickr.com/688/33264146426_fde684e26e_b.jpg" alt="Kit iFixit" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1560,7 +1905,7 @@
                 </div>
 
                 <!-- Product 25 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Laptops" data-subcat="Accesorios">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-25.png" alt="Base Cooling" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -1827,6 +2172,14 @@
         <div class="pm-stage">
         <div class="pm-modal" id="pmModal">
 
+            <nav class="pm-crumbs" id="pmCrumbs" aria-label="Ruta de categoría">
+                <span class="pm-crumb-cat" id="pmCrumbCat"></span>
+                <span class="pm-crumb-sep">/</span>
+                <span class="pm-crumb-sub" id="pmCrumbSub"></span>
+                <span class="pm-crumb-sep">/</span>
+                <span class="pm-crumb-current" id="pmCrumbName"></span>
+            </nav>
+
             <div class="pm-grid">
                 <div class="pm-media">
                     <img id="pmImg" alt="">
@@ -1917,6 +2270,59 @@
         <button id="pmClose" class="pm-close" type="button" aria-label="Cerrar detalle de producto">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
         </button>
+        </div>
+    </div>
+
+    <!-- Combo Modal -->
+    <div id="comboModal" class="pm-overlay" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+        <div class="pm-stage">
+            <div class="pm-modal">
+                <nav class="pm-crumbs" id="cmCrumbs" aria-label="Ruta de categoría">
+                    <span class="pm-crumb-cat" id="cmCrumbCat"></span>
+                    <span class="pm-crumb-sep">/</span>
+                    <span class="pm-crumb-sub" id="cmCrumbSub"></span>
+                    <span class="pm-crumb-sep">/</span>
+                    <span class="pm-crumb-current" id="cmCrumbName"></span>
+                </nav>
+                <div class="pm-grid">
+                    <div class="pm-media">
+                        <img id="cmImg" alt="">
+                        <img id="cmExtra" class="cm-media-extra" alt="Incluye monitor" hidden>
+                        <span class="pm-badge">Combo</span>
+                    </div>
+                    <div class="pm-info">
+                        <span class="pm-kicker">GigaHertz Store</span>
+                        <div class="cm-cpu">
+                            <span class="cm-cpu1" id="cmCpu1"></span>
+                            <span class="cm-cpu2" id="cmCpu2"></span>
+                        </div>
+                        <h3 class="pm-title" id="cmTitle"></h3>
+                        <p class="pm-sub" id="cmSub"></p>
+
+                        <div class="pm-pricebar">
+                            <div class="pm-price-block">
+                                <span class="pm-price-label">Precio del combo (USD)</span>
+                                <span class="pm-price" id="cmPrice"></span>
+                            </div>
+                        </div>
+
+                        <div class="pm-actions">
+                            <button type="button" class="pm-btn pm-buy" id="cmBuy">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                <span id="cmBuyLabel">Agregar al carrito</span>
+                            </button>
+                        </div>
+
+                        <div class="cm-includes">
+                            <h4>Incluye</h4>
+                            <ul id="cmIncludes"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="cmClose" class="pm-close" type="button" aria-label="Cerrar detalle del combo">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
         </div>
     </div>
 
@@ -2432,6 +2838,9 @@
             const pmBadge = document.getElementById('pmBadge');
             const pmTitle = document.getElementById('pmTitle');
             const pmSub = document.getElementById('pmSub');
+            const pmCrumbCat = document.getElementById('pmCrumbCat');
+            const pmCrumbSub = document.getElementById('pmCrumbSub');
+            const pmCrumbName = document.getElementById('pmCrumbName');
             const pmPrice = document.getElementById('pmPrice');
             const pmPriceLabel = document.getElementById('pmPriceLabel');
             const pmRate = document.getElementById('pmRate');
@@ -2466,7 +2875,9 @@
                     img: img ? img.getAttribute('src') : '',
                     alt: img ? img.getAttribute('alt') : '',
                     usd: priceEl ? parseFloat(priceEl.textContent.replace(/[^0-9.]/g, '')) : 0,
-                    badge: badgeEl ? badgeEl.textContent.trim() : ''
+                    badge: badgeEl ? badgeEl.textContent.trim() : '',
+                    cat: (card.dataset.cat || '').trim(),
+                    subcat: (card.dataset.subcat || '').trim()
                 };
             }
 
@@ -2501,6 +2912,9 @@
             function renderContent() {
                 pmImg.src = current.img;
                 pmImg.alt = current.alt || current.name;
+                pmCrumbCat.textContent = current.cat || '';
+                pmCrumbSub.textContent = current.subcat || '';
+                pmCrumbName.textContent = current.name;
                 pmTitle.textContent = current.name;
                 pmSub.textContent = current.sub;
                 if (current.badge) {
@@ -2565,16 +2979,24 @@
                     const net = el.dataset.net;
                     if (links[net]) el.href = links[net];
                 });
-                overlay.classList.add('is-open');
-                document.body.style.overflow = 'hidden';
-                pmClose.focus({ preventScroll: true });
+                const reveal = () => {
+                    overlay.classList.add('is-open');
+                    document.body.style.overflow = 'hidden';
+                    pmClose.focus({ preventScroll: true });
+                };
+                if (window.GHTransition) GHTransition.play(reveal);
+                else reveal();
             }
 
             function closeModal() {
-                overlay.classList.remove('is-open');
-                closeShare();
-                document.body.style.overflow = '';
-                if (lastFocused) lastFocused.focus({ preventScroll: true });
+                const conceal = () => {
+                    overlay.classList.remove('is-open');
+                    closeShare();
+                    document.body.style.overflow = '';
+                };
+                const settle = () => { if (lastFocused) lastFocused.focus({ preventScroll: true }); };
+                if (window.GHTransition) GHTransition.play(conceal, settle);
+                else { conceal(); settle(); }
             }
 
             document.querySelectorAll('.product-card').forEach(card => {
@@ -2964,5 +3386,208 @@
         })();
     </script>
     <script src="categorias.js"></script>
+    <script src="bottomnav.js"></script>
+    <script src="transition.js"></script>
+    <script>
+        (function () {
+            var slider = document.querySelector('.combo-slider');
+            if (!slider) return;
+            var viewport = document.getElementById('comboViewport');
+            var track = document.getElementById('comboTrack');
+            var dotsWrap = document.getElementById('comboDots');
+            var prev = slider.querySelector('.combo-prev');
+            var next = slider.querySelector('.combo-next');
+            var cards = track ? Array.prototype.slice.call(track.children) : [];
+            if (!viewport || !cards.length) return;
+
+            cards.forEach(function (card) {
+                card.addEventListener('mousemove', function (e) {
+                    var r = card.getBoundingClientRect();
+                    card.style.setProperty('--mouse-x', (e.clientX - r.left) + 'px');
+                    card.style.setProperty('--mouse-y', (e.clientY - r.top) + 'px');
+                });
+            });
+
+            function addCombo(card) {
+                if (!card || !window.GigaCart) return;
+                GigaCart.add({
+                    id: card.dataset.name,
+                    name: card.dataset.name,
+                    price: parseFloat(card.dataset.price),
+                    img: card.dataset.img
+                });
+            }
+
+            // ---- Combo modal ----
+            var comboModal = document.getElementById('comboModal');
+            var cmClose = document.getElementById('cmClose');
+            var cmImg = document.getElementById('cmImg');
+            var cmExtra = document.getElementById('cmExtra');
+            var cmCpu1 = document.getElementById('cmCpu1');
+            var cmCpu2 = document.getElementById('cmCpu2');
+            var cmTitle = document.getElementById('cmTitle');
+            var cmSub = document.getElementById('cmSub');
+            var cmPrice = document.getElementById('cmPrice');
+            var cmBuy = document.getElementById('cmBuy');
+            var cmBuyLabel = document.getElementById('cmBuyLabel');
+            var cmIncludes = document.getElementById('cmIncludes');
+            var cmCrumbCat = document.getElementById('cmCrumbCat');
+            var cmCrumbSub = document.getElementById('cmCrumbSub');
+            var cmCrumbName = document.getElementById('cmCrumbName');
+            var currentComboCard = null;
+
+            var COMBO_META = {
+                'Combo Gamer Intel i5': {
+                    sub: 'Equipo de entrada listo para jugar en 1080p.',
+                    extra: '',
+                    includes: ['Gabinete Gamer', 'Procesador Intel Core i5 - 7Gen', 'Tarjeta madre compatible', 'Memoria 12GB DDR4', 'Almacenamiento 256GB SSD M.2', 'Gráfica GTX 1660 Super', 'Fuente de poder 500W', 'Refrigeración incluida']
+                },
+                'Combo Ryzen 5': {
+                    sub: 'Rendimiento sólido para eSports y 1080p.',
+                    extra: '',
+                    includes: ['Gabinete Gamer', 'Procesador AMD Ryzen 5 - 5600G', 'Tarjeta madre AM4', 'Memoria 16GB DDR4', 'Almacenamiento 512GB SSD M.2', 'Gráfica RTX 3050', 'Fuente de poder 600W', 'Refrigeración incluida']
+                },
+                'Combo Intel i7 DDR5': {
+                    sub: 'Plataforma DDR5 pensada para 1440p.',
+                    extra: '',
+                    includes: ['Gabinete Gamer', 'Procesador Intel Core i7 - 12Gen', 'Tarjeta madre DDR5', 'Memoria 16GB DDR5', 'Almacenamiento 1TB SSD M.2', 'Gráfica RTX 4060', 'Fuente de poder 700W', 'Refrigeración líquida AIO']
+                },
+                'Combo Ryzen 7 Pro': {
+                    sub: 'Máximo rendimiento en 1440p/4K. Incluye monitor.',
+                    extra: 'img/p-4.png',
+                    includes: ['Gabinete Gamer', 'Procesador AMD Ryzen 7 - 7800X3D', 'Tarjeta madre AM5', 'Memoria 32GB DDR5', 'Almacenamiento 1TB SSD M.2', 'Gráfica RTX 4070 Super', 'Fuente de poder 850W 80+ Gold', 'Refrigeración líquida AIO', 'Monitor 24" 165Hz']
+                }
+            };
+            var checkIcon = '<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>';
+            function fmtUSD(v) { return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+            function openCombo(card) {
+                var name = card.dataset.name;
+                var meta = COMBO_META[name] || { sub: '', extra: '', includes: [] };
+                currentComboCard = card;
+                cmTitle.textContent = name;
+                if (cmCrumbCat) cmCrumbCat.textContent = card.dataset.cat || 'Combos';
+                if (cmCrumbSub) cmCrumbSub.textContent = card.dataset.subcat || '';
+                if (cmCrumbName) cmCrumbName.textContent = name;
+                cmSub.textContent = meta.sub || 'Combo GigaHertz';
+                cmCpu1.textContent = card.querySelector('.combo-cpu-line1').textContent.trim();
+                cmCpu2.textContent = card.querySelector('.combo-cpu-line2').textContent.trim();
+                cmPrice.textContent = fmtUSD(parseFloat(card.dataset.price) || 0);
+                cmImg.src = card.dataset.img;
+                cmImg.alt = name;
+                if (meta.extra) { cmExtra.src = meta.extra; cmExtra.hidden = false; }
+                else { cmExtra.hidden = true; cmExtra.removeAttribute('src'); }
+                cmIncludes.innerHTML = meta.includes.map(function (t) { return '<li>' + checkIcon + '<span>' + t + '</span></li>'; }).join('');
+                cmBuyLabel.textContent = 'Agregar al carrito';
+                var reveal = function () {
+                    comboModal.classList.add('is-open');
+                    document.body.style.overflow = 'hidden';
+                    if (cmClose) cmClose.focus({ preventScroll: true });
+                };
+                if (window.GHTransition) GHTransition.play(reveal);
+                else reveal();
+            }
+            function closeCombo() {
+                var conceal = function () {
+                    comboModal.classList.remove('is-open');
+                    if (!document.getElementById('productModal').classList.contains('is-open')) document.body.style.overflow = '';
+                };
+                if (window.GHTransition) GHTransition.play(conceal);
+                else conceal();
+            }
+            if (cmClose) cmClose.addEventListener('click', closeCombo);
+            if (comboModal) comboModal.addEventListener('click', function (e) { if (e.target === comboModal) closeCombo(); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && comboModal.classList.contains('is-open')) closeCombo(); });
+            if (cmBuy) cmBuy.addEventListener('click', function () {
+                addCombo(currentComboCard);
+                cmBuyLabel.textContent = 'Agregado al carrito';
+                setTimeout(function () { cmBuyLabel.textContent = 'Agregar al carrito'; }, 1600);
+            });
+
+            track.addEventListener('click', function (e) {
+                var btn = e.target.closest('.combo-add');
+                if (btn) { addCombo(btn.closest('.combo-card')); return; }
+                var card = e.target.closest('.combo-card');
+                if (card) openCombo(card);
+            });
+
+            cards.forEach(function (card) {
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-haspopup', 'dialog');
+                card.style.cursor = 'pointer';
+                card.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCombo(card); }
+                });
+            });
+
+            var dots = [];
+            var builtPages = -1;
+            function buildDots(pages) {
+                if (pages === builtPages) return;
+                builtPages = pages;
+                dots = [];
+                if (!dotsWrap) return;
+                dotsWrap.innerHTML = '';
+                for (var i = 0; i < pages; i++) {
+                    var d = document.createElement('button');
+                    d.type = 'button';
+                    d.className = 'combo-dot';
+                    d.setAttribute('role', 'tab');
+                    d.setAttribute('aria-label', 'Ir a la sección ' + (i + 1));
+                    (function (idx) { d.addEventListener('click', function () { goTo(idx); }); })(i);
+                    dotsWrap.appendChild(d);
+                    dots.push(d);
+                }
+            }
+
+            function step() {
+                if (cards.length < 2) return cards[0].offsetWidth;
+                return Math.abs(cards[1].offsetLeft - cards[0].offsetLeft) || cards[0].offsetWidth;
+            }
+            function perView() {
+                var s = step();
+                return s ? Math.max(1, Math.round(viewport.clientWidth / s)) : 1;
+            }
+            function pageCount() {
+                return Math.max(1, cards.length - perView() + 1);
+            }
+            function maxScroll() { return Math.max(0, viewport.scrollWidth - viewport.clientWidth); }
+            function pageLeft(i) { return Math.min(i * step() * perView(), maxScroll()); }
+            function goTo(i) { viewport.scrollTo({ left: pageLeft(i), behavior: 'smooth' }); }
+            function currentPage(pages) {
+                var pos = viewport.scrollLeft, best = 0, bestD = Infinity;
+                for (var i = 0; i < pages; i++) {
+                    var dist = Math.abs(pos - pageLeft(i));
+                    if (dist < bestD) { bestD = dist; best = i; }
+                }
+                return best;
+            }
+            function update() {
+                var ms = maxScroll();
+                var static_ = ms < 4;
+                slider.classList.toggle('is-static', static_);
+                var pages = pageCount();
+                buildDots(pages);
+                var idx = currentPage(pages);
+                dots.forEach(function (d, k) { d.classList.toggle('is-active', k === idx); });
+                if (prev) prev.disabled = static_ || viewport.scrollLeft < 4;
+                if (next) next.disabled = static_ || viewport.scrollLeft > ms - 4;
+            }
+
+            if (prev) prev.addEventListener('click', function () { viewport.scrollBy({ left: -step() * perView(), behavior: 'smooth' }); });
+            if (next) next.addEventListener('click', function () { viewport.scrollBy({ left: step() * perView(), behavior: 'smooth' }); });
+
+            var ticking = false;
+            viewport.addEventListener('scroll', function () {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(function () { ticking = false; update(); });
+            }, { passive: true });
+            window.addEventListener('resize', update);
+            if (window.ResizeObserver) { new ResizeObserver(update).observe(track); }
+            update();
+        })();
+    </script>
 </body>
 </html>

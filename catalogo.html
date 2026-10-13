@@ -2230,6 +2230,7 @@
         .cr-head {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             justify-content: space-between;
             gap: 12px;
             padding-bottom: 16px;
@@ -2247,7 +2248,7 @@
             border-radius: 999px;
             white-space: nowrap;
         }
-        .cr-search { position: relative; max-width: 420px; margin: 0 auto 20px; }
+        .cr-search { position: relative; flex: 0 0 300px; width: 300px; margin-left: auto; }
         .cr-search svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #9ca3af; pointer-events: none; }
         .cr-search input {
             width: 100%;
@@ -2264,8 +2265,12 @@
         }
         .cr-search input:focus { outline: none; border-color: #a855f7; box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15); }
         .cr-search input::placeholder { color: #9ca3af; }
-        .cr-search-row { display: flex; align-items: center; gap: 10px; max-width: 420px; margin: 0 auto 20px; }
-        .cr-search-row .cr-search { flex: 1; min-width: 0; max-width: none; margin: 0; }
+        .cr-break { display: none; }
+        @media (max-width: 1023.98px) {
+            .cr-head .cr-break { display: block; flex-basis: 100%; height: 0; }
+            .cr-search { order: 3; flex: 1 1 0; min-width: 0; width: auto; max-width: none; margin-left: 0; }
+            .cr-head > .cf-sheet-btn { order: 3; }
+        }
         .cf-sheet-btn {
             display: none;
             align-items: center;
@@ -2458,6 +2463,75 @@
         .md-links a:hover { background: #f5f3ff; color: #7c3aed; }
         .md-links a:active { background: #ede9fe; }
     </style>
+    <style>
+        /* ===== Boton de categoria (filtros) ===== */
+        .cf-cat-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            text-align: left;
+            padding-right: 14px;
+            background-image: none;
+        }
+        .cf-cat-btn #cfCatVal { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .cf-cat-btn .cf-dd-chev { transform: none; }
+        .cf-cat-btn.has-value { border-color: #ddd6fe; background: #faf5ff; color: #6d28d9; }
+
+        /* ===== Product modal: pantalla completa + ruta de categoria ===== */
+        .pm-overlay { padding: 0; align-items: stretch; justify-content: stretch; }
+        .pm-stage { max-width: none; width: 100%; height: 100%; }
+        .pm-modal { display: flex; flex-direction: column; border-radius: 0; box-shadow: none; }
+        .pm-crumbs {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            min-height: 50px;
+            padding: 13px 62px 13px 18px;
+            border-bottom: 1px solid #eef0f3;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .pm-crumb-cat { color: #7c3aed; font-weight: 800; }
+        .pm-crumb-sub { color: #6d28d9; font-weight: 700; }
+        .pm-crumb-sep { color: #c7cad1; }
+        .pm-crumb-current { color: #111827; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+        .pm-grid { flex: 1 1 auto; min-height: 0; height: auto; }
+        @media (min-width: 1280px) {
+            .pm-crumbs { font-size: 13px; min-height: 58px; padding: 16px 64px 16px 30px; }
+            .pm-info { padding: 30px 42px 42px; }
+            .pm-kicker { font-size: 11px; }
+            .pm-title { font-size: 1.6rem; }
+            .pm-sub { font-size: 14.5px; }
+            .pm-price-label { font-size: 11px; }
+            .pm-price { font-size: 2.3rem; }
+            .pm-switch-btn { font-size: 13px; }
+            .pm-rate { font-size: 12px; }
+            .pm-btn { font-size: 15px; }
+            .pm-buy { padding: 15px 22px; }
+            .pm-share { padding: 15px 20px; }
+            .pm-acc-head { font-size: 14.5px; padding: 16px 0; }
+            .pm-text { font-size: 15px; }
+            .pm-specs > div { font-size: 14.5px; padding: 12px 0; }
+            .pm-badge { font-size: 11px; padding: 5px 12px; }
+            .pm-close { top: 16px; right: 16px; width: 44px; height: 44px; }
+        }
+        @media (min-width: 1650px) {
+            .pm-crumbs { font-size: 14px; }
+            .pm-info { padding: 40px 58px 54px; }
+            .pm-title { font-size: 1.9rem; }
+            .pm-sub { font-size: 16px; }
+            .pm-price { font-size: 2.7rem; }
+            .pm-btn { font-size: 16px; }
+            .pm-acc-head { font-size: 15.5px; }
+            .pm-text { font-size: 16px; }
+            .pm-specs > div { font-size: 15.5px; padding: 13px 0; }
+        }
+    </style>
 </head>
 <body class="w-full relative">
 
@@ -2557,15 +2631,11 @@
                     </div>
 
                     <div class="cf-group">
-                        <label class="cf-label" for="cfCat">Categoría</label>
-                        <select id="cfCat" class="cf-select">
-                            <option value="">Ver todas</option>
-                            <option value="Laptops">Laptops</option>
-                            <option value="Computadoras">Computadoras</option>
-                            <option value="Componentes">Componentes</option>
-                            <option value="Periféricos">Periféricos</option>
-                            <option value="Impresión">Impresión</option>
-                        </select>
+                        <span class="cf-label">Categoría</span>
+                        <button type="button" id="cfCatBtn" class="cf-select cf-cat-btn" aria-haspopup="dialog" aria-label="Elegir categoría">
+                            <span id="cfCatVal">Ver todas</span>
+                            <svg class="cf-dd-chev" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
                     </div>
 
                     <div class="cf-group">
@@ -2594,8 +2664,7 @@
                     <div class="cr-head">
                         <h2 class="cr-title">Productos</h2>
                         <span class="cr-count" id="crCount">0 productos</span>
-                    </div>
-                    <div class="cr-search-row">
+                        <span class="cr-break" aria-hidden="true"></span>
                         <div class="cr-search">
                             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
                             <input type="search" id="cfSearch" placeholder="Buscar productos..." autocomplete="off" aria-label="Buscar productos">
@@ -2607,7 +2676,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3 sm:gap-6" id="crGrid">
 <!-- Product 1 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Tarjetas de Video">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-1.png" alt="Tarjeta Gráfica RTX 4070" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2625,7 +2694,7 @@
                 </div>
 
                 <!-- Product 2 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Procesadores">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-2.png" alt="Procesador AMD Ryzen 7" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2643,7 +2712,7 @@
                 </div>
 
                 <!-- Product 3 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Teclados">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-3.png" alt="Teclado Mecánico RGB Pro" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2661,7 +2730,7 @@
                 </div>
 
                 <!-- Product 4 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras" data-subcat="Monitores">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-4.png" alt="Monitor Gamer Curvo 27" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2679,7 +2748,7 @@
                 </div>
 
                 <!-- Product 5 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Audífonos">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-5.png" alt="Audífonos Gamer 7.1" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2697,7 +2766,7 @@
                 </div>
 
                 <!-- Product 6 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Tarjetas de Video">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/ZOTAC_Gaming%27s_GeForce_RTX_50_Series_Graphics_Carda.jpg/500px-ZOTAC_Gaming%27s_GeForce_RTX_50_Series_Graphics_Carda.jpg" alt="RTX 4060 Ti" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2712,7 +2781,7 @@
                 </div>
 
                 <!-- Product 7 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Procesadores">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-7.png" alt="Core i7-14700K" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2727,7 +2796,7 @@
                 </div>
 
                 <!-- Product 8 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Tarjetas Madre Intel">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-8.png" alt="Z790 Motherboard" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2742,7 +2811,7 @@
                 </div>
 
                 <!-- Product 9 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Memorias Ram DDR5">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-9.avif" alt="RAM 32GB" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2757,7 +2826,7 @@
                 </div>
 
                 <!-- Product 10 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="SSD M.2">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Samsung_980_PRO_PCIe_4.0_NVMe_SSD_1TB-top_PNr%C2%B00915.jpg/500px-Samsung_980_PRO_PCIe_4.0_NVMe_SSD_1TB-top_PNr%C2%B00915.jpg" alt="SSD 2TB" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2772,7 +2841,7 @@
                 </div>
 
                 <!-- Product 11 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Fuentes de Poder">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-11.png" alt="PSU 850W" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2787,7 +2856,7 @@
                 </div>
 
                 <!-- Product 12 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Cases">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-12.png" alt="Case Lian Li" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2802,7 +2871,7 @@
                 </div>
 
                 <!-- Product 13 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Componentes" data-subcat="Enfriamiento">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-13.webp" alt="Enfriamiento Líquido" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2817,7 +2886,7 @@
                 </div>
 
                 <!-- Product 14 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Mouses">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-14.png" alt="Mouse Superlight" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2832,7 +2901,7 @@
                 </div>
 
                 <!-- Product 15 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Sillas Gamer">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-15.png" alt="Silla Gamer" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2847,7 +2916,7 @@
                 </div>
 
                 <!-- Product 16 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Laptops">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Laptops" data-subcat="Laptops">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-16.png" alt="Laptop Gamer" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2862,7 +2931,7 @@
                 </div>
 
                 <!-- Product 17 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras" data-subcat="Monitores">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-17.avif" alt="Monitor 24" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2877,7 +2946,7 @@
                 </div>
 
                 <!-- Product 18 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Micrófonos">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Blue_Yeti_Blackout_USB_microphone_%2851844234538%29.jpg/500px-Blue_Yeti_Blackout_USB_microphone_%2851844234538%29.jpg" alt="QuadCast S" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2892,7 +2961,7 @@
                 </div>
 
                 <!-- Product 19 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Controles/Volantes">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-19.png" alt="Control Xbox" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2907,7 +2976,7 @@
                 </div>
 
                 <!-- Product 20 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión" data-subcat="Router y Mesh">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-20.png" alt="Router WiFi 6" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2922,7 +2991,7 @@
                 </div>
 
                 <!-- Product 21 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Computadoras" data-subcat="UPS / Respaldo Eléctrico">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-21.png" alt="UPS 1500VA" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2937,7 +3006,7 @@
                 </div>
 
                 <!-- Product 22 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Periféricos" data-subcat="Webcam">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-22.png" alt="Webcam C920" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2952,7 +3021,7 @@
                 </div>
 
                 <!-- Product 23 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión" data-subcat="Impresoras">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-23.png" alt="Impresora EcoTank" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2967,7 +3036,7 @@
                 </div>
 
                 <!-- Product 24 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Impresión" data-subcat="Accesorios">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="https://live.staticflickr.com/688/33264146426_fde684e26e_b.jpg" alt="Kit iFixit" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -2982,7 +3051,7 @@
                 </div>
 
                 <!-- Product 25 -->
-                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Laptops">
+                <div class="product-card p-3 sm:p-5 flex flex-col justify-between relative group" data-cat="Laptops" data-subcat="Accesorios">
                     <div class="relative z-10">
                         <div class="w-full h-32 sm:h-44 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 overflow-hidden relative">
                             <img src="img/p-25.png" alt="Base Cooling" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300">
@@ -3119,6 +3188,14 @@
         <div class="pm-stage">
         <div class="pm-modal" id="pmModal">
 
+            <nav class="pm-crumbs" id="pmCrumbs" aria-label="Ruta de categoría">
+                <span class="pm-crumb-cat" id="pmCrumbCat"></span>
+                <span class="pm-crumb-sep">/</span>
+                <span class="pm-crumb-sub" id="pmCrumbSub"></span>
+                <span class="pm-crumb-sep">/</span>
+                <span class="pm-crumb-current" id="pmCrumbName"></span>
+            </nav>
+
             <div class="pm-grid">
                 <div class="pm-media">
                     <img id="pmImg" alt="">
@@ -3237,6 +3314,9 @@
             const pmSpecsList = document.getElementById('pmSpecsList');
             const accDesc = document.getElementById('pmAccDesc');
             const accSpecs = document.getElementById('pmAccSpecs');
+            const pmCrumbCat = document.getElementById('pmCrumbCat');
+            const pmCrumbSub = document.getElementById('pmCrumbSub');
+            const pmCrumbName = document.getElementById('pmCrumbName');
 
             let current = null;
             let currency = 'usd';
@@ -3257,7 +3337,9 @@
                     img: img ? img.getAttribute('src') : '',
                     alt: img ? img.getAttribute('alt') : '',
                     usd: priceEl ? parseFloat(priceEl.textContent.replace(/[^0-9.]/g, '')) : 0,
-                    badge: badgeEl ? badgeEl.textContent.trim() : ''
+                    badge: badgeEl ? badgeEl.textContent.trim() : '',
+                    cat: (card.dataset.cat || '').trim(),
+                    subcat: (card.dataset.subcat || '').trim()
                 };
             }
 
@@ -3292,6 +3374,9 @@
             function renderContent() {
                 pmImg.src = current.img;
                 pmImg.alt = current.alt || current.name;
+                pmCrumbCat.textContent = current.cat || '';
+                pmCrumbSub.textContent = current.subcat || '';
+                pmCrumbName.textContent = current.name;
                 pmTitle.textContent = current.name;
                 pmSub.textContent = current.sub;
                 if (current.badge) {
@@ -3356,16 +3441,24 @@
                     const net = el.dataset.net;
                     if (links[net]) el.href = links[net];
                 });
-                overlay.classList.add('is-open');
-                document.body.style.overflow = 'hidden';
-                pmClose.focus({ preventScroll: true });
+                const reveal = () => {
+                    overlay.classList.add('is-open');
+                    document.body.style.overflow = 'hidden';
+                    pmClose.focus({ preventScroll: true });
+                };
+                if (window.GHTransition) GHTransition.play(reveal);
+                else reveal();
             }
 
             function closeModal() {
-                overlay.classList.remove('is-open');
-                closeShare();
-                document.body.style.overflow = '';
-                if (lastFocused) lastFocused.focus({ preventScroll: true });
+                const conceal = () => {
+                    overlay.classList.remove('is-open');
+                    closeShare();
+                    document.body.style.overflow = '';
+                };
+                const settle = () => { if (lastFocused) lastFocused.focus({ preventScroll: true }); };
+                if (window.GHTransition) GHTransition.play(conceal, settle);
+                else { conceal(); settle(); }
             }
 
             document.querySelectorAll('.product-card').forEach(card => {
@@ -3617,7 +3710,8 @@
             const sortDd = document.getElementById('cfSort');
             const sortBtn = sortDd.querySelector('.cf-dd-btn');
             const sortLabel = document.getElementById('cfSortLabel');
-            const catSel = document.getElementById('cfCat');
+            const catBtn = document.getElementById('cfCatBtn');
+            const catVal = document.getElementById('cfCatVal');
             const minInp = document.getElementById('cfMin');
             const maxInp = document.getElementById('cfMax');
             const loRange = document.getElementById('cfLo');
@@ -3626,6 +3720,65 @@
             const resetBtn = document.getElementById('cfReset');
             const searchInp = document.getElementById('cfSearch');
             const PER_PAGE = 20;
+            const CATS = ['Laptops', 'Computadoras', 'Componentes', 'Periféricos', 'Impresión'];
+            const CAT_MAP = {
+                'Procesadores': 'Componentes',
+                'Tarjetas Madre AMD': 'Componentes',
+                'Tarjetas Madre Intel': 'Componentes',
+                'Tarjetas Madre': 'Componentes',
+                'Tarjetas de Video': 'Componentes',
+                'Memorias Ram DDR3': 'Componentes',
+                'Memorias Ram DDR4': 'Componentes',
+                'Memorias Ram DDR5': 'Componentes',
+                'Memorias Ram Laptop': 'Componentes',
+                'Memorias Ram': 'Componentes',
+                'SSD M.2': 'Componentes',
+                'SSD Sata': 'Componentes',
+                'Discos Externos': 'Componentes',
+                'Enclosure/Case externo': 'Componentes',
+                'Fuentes de Poder': 'Componentes',
+                'Enfriamiento': 'Componentes',
+                'Pastas Térmicas': 'Componentes',
+                'Thermal Pads': 'Componentes',
+                'Cases': 'Componentes',
+                'Equipos Repotenciados': 'Computadoras',
+                'Periféricos y Gaming': 'Periféricos',
+                'Teclados': 'Periféricos',
+                'Mouses': 'Periféricos',
+                'Kit Teclado + Mouse': 'Periféricos',
+                'Mouse Pads': 'Periféricos',
+                'Keycaps': 'Periféricos',
+                'Audífonos': 'Periféricos',
+                'Micrófonos': 'Periféricos',
+                'Controles/Volantes': 'Periféricos',
+                'Controles': 'Periféricos',
+                'Sillas Gamer': 'Periféricos',
+                'Mesas/Escritorios Gamer': 'Periféricos',
+                'Laptops': 'Laptops',
+                'Mini PC': 'Computadoras',
+                'Computadoras': 'Computadoras',
+                'Tablets': 'Computadoras',
+                'Tabletas Graficas': 'Componentes',
+                'Monitores': 'Computadoras',
+                'Proyectores y Pantallas': 'Computadoras',
+                'Audio': 'Periféricos',
+                'Grabación y Podcast': 'Periféricos',
+                'Webcam': 'Periféricos',
+                'Impresoras': 'Impresión',
+                'Tintas y Toner': 'Impresión',
+                'Letreros Led y Lámparas': 'Componentes',
+                'Soportes': 'Componentes',
+                'Redes': 'Componentes',
+                'Router y Mesh': 'Componentes',
+                'Router': 'Componentes',
+                'Cargadores': 'Componentes',
+                'UPS / Respaldo Eléctrico': 'Componentes',
+                'Cables y Adaptadores': 'Componentes',
+                'Camaras de Seguridad': 'Componentes',
+                'Maletines y Bolsos': 'Periféricos',
+                'Accesorios': 'Componentes',
+                'Gift Cards y Licencias': 'Componentes'
+            };
 
             const pagEl = document.createElement('div');
             pagEl.className = 'cr-pag';
@@ -3644,6 +3797,7 @@
                     i: i,
                     name: name,
                     cat: el.dataset.cat || '',
+                    subcat: el.dataset.subcat || '',
                     text: (name + ' ' + (subEl ? subEl.textContent : '')).toLowerCase(),
                     price: priceEl ? parseFloat(priceEl.textContent.replace(/[^0-9.]/g, '')) : 0
                 };
@@ -3651,7 +3805,7 @@
 
             const absMin = Math.min.apply(null, data.map(d => d.price));
             const absMax = Math.max.apply(null, data.map(d => d.price));
-            const state = { sort: 'default', min: absMin, max: absMax, cat: '', q: '', page: 1 };
+            const state = { sort: 'default', min: absMin, max: absMax, cat: '', subcat: '', subcats: null, section: '', q: '', page: 1 };
 
             [loRange, hiRange].forEach(r => {
                 r.min = absMin;
@@ -3726,6 +3880,8 @@
                 const visible = data.filter(d => {
                     if (d.price < state.min || d.price > state.max) return false;
                     if (state.cat && d.cat !== state.cat) return false;
+                    if (state.subcat && d.subcat !== state.subcat) return false;
+                    if (state.subcats && state.subcats.indexOf(d.subcat) === -1) return false;
                     if (q && d.text.indexOf(q) === -1) return false;
                     return true;
                 });
@@ -3768,6 +3924,39 @@
 
             function resetPage() { state.page = 1; }
 
+            function clearCatFilter() {
+                state.cat = '';
+                state.subcat = '';
+                state.subcats = null;
+                state.section = '';
+            }
+
+            function refreshCatLabel() {
+                catVal.textContent = state.section || state.subcat || state.cat || 'Ver todas';
+                catBtn.classList.toggle('has-value', !!(state.cat || state.subcat || state.subcats));
+            }
+
+            function setCat(v) {
+                clearCatFilter();
+                state.cat = CATS.indexOf(v) !== -1 ? v : '';
+                refreshCatLabel();
+            }
+
+            function setSubcat(v) {
+                clearCatFilter();
+                state.subcat = v || '';
+                refreshCatLabel();
+            }
+
+            function setSubcats(list, section) {
+                clearCatFilter();
+                state.subcats = (list && list.length) ? list.slice() : null;
+                state.section = section || '';
+                refreshCatLabel();
+            }
+
+            const SUB_SET = new Set(data.map(d => d.subcat).filter(Boolean));
+
             function setSort(v, label) {
                 state.sort = v;
                 sortLabel.textContent = label;
@@ -3799,10 +3988,8 @@
                 if (e.key === 'Escape') closeDd();
             });
 
-            catSel.addEventListener('change', () => {
-                state.cat = catSel.value;
-                resetPage();
-                apply();
+            catBtn.addEventListener('click', () => {
+                if (window.ghOpenCat) window.ghOpenCat();
             });
 
             searchInp.addEventListener('input', () => {
@@ -3854,7 +4041,7 @@
                 state.page = 1;
                 sortLabel.textContent = 'Recomendados';
                 sortDd.querySelectorAll('.cf-dd-menu button').forEach(b => b.classList.toggle('is-active', b.dataset.v === 'default'));
-                catSel.value = '';
+                setCat('');
                 minInp.value = '';
                 maxInp.value = '';
                 searchInp.value = '';
@@ -3864,47 +4051,56 @@
 
             syncRangeUI();
 
-            (function () {
-                var p = new URLSearchParams(location.search).get('cat');
-                if (!p) return;
-                var map = {
-                    "Procesadores": "Componentes",
-                    "Tarjetas Madre": "Componentes",
-                    "Tarjetas de Video": "Componentes",
-                    "Memorias Ram": "Componentes",
-                    "Discos Externos": "Componentes",
-                    "Fuentes de Poder": "Componentes",
-                    "Cases": "Componentes",
-                    "Equipos Repotenciados": "Computadoras",
-                    "Periféricos y Gaming": "Periféricos",
-                    "Teclados": "Periféricos",
-                    "Mouses": "Periféricos",
-                    "Kit Teclado + Mouse": "Periféricos",
-                    "Audífonos": "Periféricos",
-                    "Micrófonos": "Periféricos",
-                    "Controles": "Periféricos",
-                    "Sillas Gamer": "Periféricos",
-                    "Laptops": "Laptops",
-                    "Computadoras": "Computadoras",
-                    "Monitores": "Computadoras",
-                    "Audio": "Periféricos",
-                    "Router": "Componentes",
-                    "Cargadores": "Componentes",
-                    "UPS / Respaldo Eléctrico": "Componentes",
-                    "Camaras de Seguridad": "Componentes",
-                    "Impresoras": "Impresión",
-                    "Accesorios": "Componentes"
-                };
-                var v = map[p] || p;
-                var valid = Array.prototype.some.call(catSel.options, function (o) { return o.value === v; });
-                if (!valid) return;
-                state.cat = v;
-                catSel.value = v;
-                resetPage();
-                apply();
+            function scrollToCr(smooth) {
                 var cr = document.querySelector('.cr');
-                if (cr) cr.scrollIntoView({ behavior: 'auto', block: 'start' });
-            })();
+                if (!cr) return;
+                var auto = !smooth || matchMedia('(prefers-reduced-motion: reduce)').matches;
+                cr.scrollIntoView({ behavior: auto ? 'auto' : 'smooth', block: 'start' });
+            }
+
+            /* Aplica categoria/subcategoria sin recargar (la usa categorias.js).
+               name: string (bucket o subcategoria) o {section, items} (boton "Todos"). */
+            function applyCatFromName(name) {
+                if (name && typeof name === 'object') {
+                    setSubcats(name.items, name.section);
+                    resetPage(); apply(); scrollToCr(true);
+                    return true;
+                }
+                if (!name) { setCat(''); resetPage(); apply(); return false; }
+                if (CATS.indexOf(name) !== -1) {
+                    setCat(name);
+                    resetPage(); apply(); scrollToCr(true);
+                    return true;
+                }
+                if (SUB_SET.has(name)) {
+                    setSubcat(name);
+                    resetPage(); apply(); scrollToCr(true);
+                    return true;
+                }
+                var v = CAT_MAP[name] || name;
+                setCat(v);
+                resetPage(); apply(); scrollToCr(true);
+                return CATS.indexOf(v) !== -1;
+            }
+            window.ghApplyCat = applyCatFromName;
+
+            window.addEventListener('DOMContentLoaded', function () {
+                var sp = new URLSearchParams(location.search);
+                var sub = sp.get('sub');
+                var sec = sp.get('sec');
+                if (sub) { setSubcat(sub); resetPage(); apply(); scrollToCr(true); return; }
+                if (sec) {
+                    var items = window.ghCatSection ? window.ghCatSection(sec) : null;
+                    if (items) { setSubcats(items, sec); resetPage(); apply(); scrollToCr(true); }
+                    return;
+                }
+                var p = sp.get('cat');
+                if (!p) return;
+                var v = CAT_MAP[p] || p;
+                if (CATS.indexOf(v) === -1) return;
+                setCat(v);
+                resetPage(); apply(); scrollToCr(false);
+            });
 
             apply();
         })();
@@ -3997,5 +4193,7 @@
             }).observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
         })();
     </script>
+    <script src="bottomnav.js"></script>
+    <script src="transition.js"></script>
 </body>
 </html>

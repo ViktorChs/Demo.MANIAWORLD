@@ -67,6 +67,8 @@
         '.cm-chip{display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#374151;font-family:inherit;font-size:12px;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer;text-align:left;transition:background-color 130ms ease,color 130ms ease,border-color 130ms ease,transform 130ms cubic-bezier(.23,1,.32,1)}',
         '.cm-chip:hover{background:#7c3aed;border-color:#7c3aed;color:#fff}',
         '.cm-chip:active{transform:scale(.96)}',
+        '.cm-chip-all{background:#7c3aed;border-color:#7c3aed;color:#fff;font-weight:800}',
+        '.cm-chip-all:hover{background:#6d28d9;border-color:#6d28d9;color:#fff}',
         /* layout: sections (overview squares + detail) */
         '.cm-sec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}',
         '@media (min-width:760px){.cm-sec-grid{grid-template-columns:repeat(3,1fr)}}',
@@ -132,7 +134,9 @@
                 '<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>Categorías' +
                 '</button>' +
                 '<h4 class="cm-detail-h">' + svg(g.icon) + '<span>' + g.name + '</span></h4>' +
-                '<div class="cm-sec-items">' + chipsHTML(g) + '</div>';
+                '<div class="cm-sec-items">' +
+                '<button type="button" class="cm-chip cm-chip-all" data-all="1">Todos</button>' +
+                chipsHTML(g) + '</div>';
             return;
         }
         body.innerHTML = '<div class="cm-sec-grid">' + GROUPS.map(function (g, i) {
@@ -226,6 +230,18 @@
         if (lastFocus && lastFocus.focus) lastFocus.focus();
     }
 
+    /* API publica: la usan el boton "Categoria" de los filtros y la barra inferior */
+    window.ghOpenCat = openCat;
+    window.ghCloseCat = closeCat;
+
+    /* Devuelve las subcategorias de una seccion (para el filtro "Todos" del catalogo) */
+    window.ghCatSection = function (name) {
+        for (var i = 0; i < GROUPS.length; i++) {
+            if (GROUPS[i].name === name) return GROUPS[i].items.slice();
+        }
+        return null;
+    };
+
     sw.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-v]');
         if (!b) return;
@@ -260,8 +276,18 @@
         }
         var chip = e.target.closest('.cm-chip');
         if (!chip) return;
+        var isAll = chip.hasAttribute('data-all');
+        var name = chip.dataset.cat || '';
+        var group = (secActive !== null) ? GROUPS[secActive] : null;
         closeCat();
-        location.href = 'catalogo.html';
+        /* En el catalogo aplicamos la categoria/subcategoria sin recargar la pagina */
+        if (window.ghApplyCat) {
+            if (isAll && group) { window.ghApplyCat({ section: group.name, items: group.items }); return; }
+            window.ghApplyCat(name);
+            return;
+        }
+        if (isAll && group) { location.href = 'catalogo.html?sec=' + encodeURIComponent(group.name); return; }
+        location.href = 'catalogo.html?sub=' + encodeURIComponent(name);
     });
 
     var onIndex = !!document.getElementById('productos');
