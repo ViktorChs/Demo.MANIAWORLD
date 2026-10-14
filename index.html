@@ -33,14 +33,14 @@
         }
         /* Logo del hero: escalable en todos los dispositivos */
         .hero-logo-img {
-            width: clamp(10rem, 46vw, 16rem);
-            max-width: 88vw;
+            width: clamp(14rem, 82vw, 22rem);
+            max-width: 92vw;
             max-height: 72vh;
             height: auto;
             object-fit: contain;
         }
         @media (min-width: 640px) {
-            .hero-logo-img { width: clamp(16rem, 34vw, 22rem); }
+            .hero-logo-img { width: clamp(16rem, 40vw, 24rem); }
         }
         @media (min-width: 1024px) {
             .hero-logo-img { width: 50rem; max-width: 88vw; }
@@ -663,7 +663,7 @@
             transition: opacity 320ms cubic-bezier(0.23, 1, 0.32, 1), visibility 0s linear 320ms;
         }
         .pl.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
-        .pl-logo { width: 160px; height: 160px; object-fit: contain; }
+        .pl-logo { width: clamp(170px, 58vw, 230px); height: auto; object-fit: contain; }
         .pl-ring {
             width: 46px;
             height: 46px;
