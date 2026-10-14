@@ -4,7 +4,13 @@
     var GRID_ID = 'gh-transition-grid';
     var STYLE_ID = 'gh-transition-style';
     var SQ = 'gh-grid-square';
-    var GRID_BG = '#F8F8FA';
+    var GRID_BG = '#2A1B4D';
+
+    function gridBg() {
+        var dark = false;
+        try { dark = document.documentElement.classList.contains('dark'); } catch (e) {}
+        return dark ? '#3D2A6B' : '#F8F8FA';
+    }
     var TRANSITION = 280;
     var TOTAL = 380;
     var HOLD = 260;
@@ -28,7 +34,7 @@
         s.textContent =
             '#' + GRID_ID + '{position:fixed;inset:-2px;z-index:9999;display:grid;opacity:0;visibility:hidden;pointer-events:none;}'
             + '#' + GRID_ID + '.active{opacity:1;visibility:visible;pointer-events:auto;}'
-            + '.' + SQ + '{background-color:' + GRID_BG + ';transform:scale(0);transition:transform ' + TRANSITION + 'ms cubic-bezier(0.16,1,0.3,1);will-change:transform;width:101%;height:101%;}'
+            + '.' + SQ + '{background-color:var(--gh-transition-bg,' + GRID_BG + ');transform:scale(0);transition:transform ' + TRANSITION + 'ms cubic-bezier(0.16,1,0.3,1);will-change:transform;width:101%;height:101%;}'
             + '.' + SQ + '.show{transform:scale(1.02);}'
             + '.' + SQ + '.hide{transform:scale(0);}';
         document.head.appendChild(s);
@@ -96,6 +102,7 @@
         }
 
         busy = true;
+        grid.style.setProperty('--gh-transition-bg', gridBg());
         grid.classList.add('active');
         animate(true, function () {
             if (mid) mid();

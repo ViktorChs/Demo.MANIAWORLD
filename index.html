@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GigaHertz Store</title>
+    <title>MANIAWORLD</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="dark.css">
+    <link rel="stylesheet" href="glow-cards.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -27,6 +30,46 @@
             display: block;
             width: 100%;
             height: 100%;
+        }
+        /* Logo del hero: escalable en todos los dispositivos */
+        .hero-logo-img {
+            width: clamp(10rem, 46vw, 16rem);
+            max-width: 88vw;
+            max-height: 72vh;
+            height: auto;
+            object-fit: contain;
+        }
+        @media (min-width: 640px) {
+            .hero-logo-img { width: clamp(16rem, 34vw, 22rem); }
+        }
+        @media (min-width: 1024px) {
+            .hero-logo-img { width: 50rem; max-width: 88vw; }
+        }
+        /* Destellos morados estáticos en las esquinas del canvas */
+        .hero-glow {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background:
+                radial-gradient(circle 360px at 0% 0%, rgba(124, 58, 237, 0.30), transparent 70%),
+                radial-gradient(circle 360px at 100% 0%, rgba(168, 85, 247, 0.26), transparent 70%),
+                radial-gradient(circle 320px at 0% 100%, rgba(217, 70, 239, 0.24), transparent 70%),
+                radial-gradient(circle 320px at 100% 100%, rgba(139, 92, 246, 0.26), transparent 70%);
+        }
+        html.dark .hero-glow {
+            background:
+                radial-gradient(circle 400px at 0% 0%, rgba(139, 92, 246, 0.38), transparent 70%),
+                radial-gradient(circle 400px at 100% 0%, rgba(192, 132, 252, 0.32), transparent 70%),
+                radial-gradient(circle 360px at 0% 100%, rgba(232, 121, 249, 0.30), transparent 70%),
+                radial-gradient(circle 360px at 100% 100%, rgba(167, 139, 250, 0.34), transparent 70%);
+        }
+        @media (max-width: 639.98px) {
+            .hero-glow {
+                background:
+                    radial-gradient(circle 240px at 0% 0%, rgba(124, 58, 237, 0.26), transparent 70%),
+                    radial-gradient(circle 240px at 100% 100%, rgba(217, 70, 239, 0.24), transparent 70%);
+            }
         }
         .glass-panel {
             background: rgba(255, 255, 255, 0.9);
@@ -1246,6 +1289,11 @@
         .pm-crumb-sub { color: #6d28d9; font-weight: 700; }
         .pm-crumb-sep { color: #c7cad1; }
         .pm-crumb-current { color: #111827; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+        .pm-crumb-cat.is-link, .pm-crumb-sub.is-link { cursor: pointer; border-radius: 7px; padding: 2px 7px; margin: -2px -7px; transition: background-color 130ms ease, color 130ms ease, transform 130ms cubic-bezier(0.23, 1, 0.32, 1); }
+        .pm-crumb-cat.is-link:hover, .pm-crumb-sub.is-link:hover { background: #f1ecfe; }
+        .pm-crumb-cat.is-link:active, .pm-crumb-sub.is-link:active { transform: scale(0.96); }
+        .pm-crumb-cat.is-link:focus-visible, .pm-crumb-sub.is-link:focus-visible { outline: 2px solid #a855f7; outline-offset: 1px; }
+        .pm-crumb-cat[hidden], .pm-crumb-sub[hidden], .pm-crumb-sep[hidden] { display: none; }
         .pm-grid { flex: 1 1 auto; min-height: 0; height: auto; }
         @media (min-width: 1280px) {
             .pm-crumbs { font-size: 13px; min-height: 58px; padding: 16px 64px 16px 30px; }
@@ -1283,7 +1331,7 @@
 
     <!-- Page loader -->
     <div id="pageLoader" class="pl" aria-hidden="true">
-        <img src="logo.png" alt="GigaHertz Store" class="pl-logo" onerror="this.src='https://placehold.co/400x400/ffffff/7c3aed?text=GigaHertz'">
+        <img src="logo2.png" alt="MANIAWORLD" class="pl-logo" onerror="this.src='https://placehold.co/400x400/ffffff/7c3aed?text=GigaHertz'">
         <div class="pl-ring"></div>
     </div>
     <script>
@@ -1312,9 +1360,12 @@
     <div id="canvasContainer">
         <canvas id="hexCanvas"></canvas>
 
+        <!-- Destellos morados en las esquinas del canvas -->
+        <div class="hero-glow" aria-hidden="true"></div>
+
         <!-- Center Logo -->
-        <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none p-4 pb-36">
-            <img src="logo.png" alt="GigaHertz Store" class="w-56 sm:w-72 lg:w-80 h-auto object-contain drop-shadow-xl pointer-events-auto transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x400/ffffff/7c3aed?text=GigaHertz'">
+        <div class="hero-logo absolute inset-0 flex items-center justify-center z-10 pointer-events-none p-4 pb-36">
+            <img src="logo2.png" alt="MANIAWORLD" class="hero-logo-img h-auto object-contain drop-shadow-xl pointer-events-auto transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x400/ffffff/7c3aed?text=GigaHertz'">
         </div>
 
         <!-- Bottom Category Slider Bar -->
@@ -1339,7 +1390,7 @@
     <nav class="fixed top-0 left-0 w-full h-16 z-30 flex items-center justify-between px-4 sm:px-8 border-b border-gray-200/40 pointer-events-auto" style="background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 70%, rgba(255, 255, 255, 0) 100%); backdrop-filter: blur(8px);">
         <div class="flex items-center space-x-8 flex-shrink-0">
             <a href="#" class="flex items-center space-x-2">
-                <span class="font-bold text-gray-900 tracking-wide text-sm sm:text-base">GIGAHERTZ STORE</span>
+                <span class="font-bold text-gray-900 tracking-wide text-sm sm:text-base">MANIAWORLD</span>
             </a>
         </div>
 
@@ -1384,7 +1435,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col items-center mb-6 sm:mb-10 text-center px-4">
                 <span class="text-purple-600 font-bold text-xs uppercase tracking-widest mb-2 bg-purple-50 px-3 py-1 rounded-full border border-purple-100">Arma y ahorra</span>
-                <h3 class="text-xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Combos GigaHertz</h3>
+                <h3 class="text-xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Combos Mania</h3>
                 <p class="text-gray-500 text-sm mt-1 max-w-md">Equipos listos para jugar y trabajar. Elige el tuyo y llévalo completo.</p>
             </div>
 
@@ -1932,7 +1983,7 @@
                 <div class="flex flex-col items-center mb-8 text-center">
                     <span class="text-purple-600 font-bold text-xs uppercase tracking-widest mb-2 bg-purple-50 px-3 py-1 rounded-full border border-purple-100">Ayuda rápida</span>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Preguntas Frecuentes</h3>
-                    <p class="text-gray-500 text-sm mt-1 max-w-md">Todo lo que necesitas saber antes de comprar en GigaHertz Store.</p>
+                    <p class="text-gray-500 text-sm mt-1 max-w-md">Todo lo que necesitas saber antes de comprar en MANIAWORLD.</p>
                 </div>
 
                 <div class="faq-card">
@@ -1994,7 +2045,7 @@
             <div>
                 <h3 class="text-gray-900 font-bold text-lg mb-2 tracking-wide flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-purple-600"></span>
-                    GIGAHERTZ STORE
+                    MANIAWORLD
                 </h3>
                 <span class="block w-12 h-1 rounded-full bg-purple-500 mb-3"></span>
                 <p class="text-xs text-gray-500 leading-relaxed">Tu tienda de confianza en tecnología, componentes de alta gama y equipos de computación en zulia y toda Venezuela.</p>
@@ -2038,9 +2089,9 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto pt-6 border-t border-purple-100 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400">
-            <p>&copy; 2026 GigaHertz Store. Todos los derechos reservados.</p>
+            <p>&copy; 2026 MANIAWORLD. Todos los derechos reservados.</p>
             <div class="mt-2 sm:mt-0 flex items-center gap-2">
-                <span class="text-purple-500 font-medium">GigaHertz Store</span>
+                <span class="text-purple-500 font-medium">MANIAWORLD</span>
                 <button id="settingsToggle" class="p-2 rounded-full bg-white/80 text-gray-800 hover:bg-white shadow-sm backdrop-blur-md border border-gray-200 transition-colors" title="Panel de Modificaciones" aria-label="Panel de modificaciones">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
@@ -2075,8 +2126,8 @@
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1.5">Modo de Animación</label>
                     <select id="modeSelect" class="w-full bg-white/90 border border-gray-200 text-gray-800 text-xs sm:text-sm rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer shadow-sm">
-                        <option value="organic_zones" selected>1. Matriz de Zonas Orgánicas (Por Defecto)</option>
-                        <option value="pulse">2. Pulso Central</option>
+                        <option value="organic_zones">1. Matriz de Zonas Orgánicas</option>
+                        <option value="pulse" selected>2. Pulso Central (Por Defecto)</option>
                         <option value="supernova">3. Explosión Supernova</option>
                         <option value="fluid_nodes">4. Ondas Orgánicas Fluctuantes</option>
                         <option value="corner_rotation">5. Respiración de Esquinas</option>
@@ -2090,9 +2141,9 @@
                 <div>
                     <div class="flex justify-between text-xs font-semibold text-gray-700 mb-1.5">
                         <span>Intensidad de Brillo Neón</span>
-                        <span id="glowVal" class="text-purple-600 font-bold">1.0x</span>
+                        <span id="glowVal" class="text-purple-600 font-bold">2.0x</span>
                     </div>
-                    <input type="range" id="glowSlider" min="0.5" max="2.0" step="0.1" value="1.0" 
+                    <input type="range" id="glowSlider" min="0.5" max="2.0" step="0.1" value="2.0" 
                         class="w-full accent-purple-600 cursor-pointer">
                 </div>
 
@@ -2114,7 +2165,7 @@
             </div>
 
             <div class="text-center pt-6 mt-6 border-t border-gray-200 text-[11px] text-gray-500">
-                GigaHertz Store &bull; Panel Modal Interactivo
+                MANIAWORLD &bull; Panel Modal Interactivo
             </div>
         </div>
     </div>
@@ -2123,7 +2174,7 @@
     <div id="navMenu" class="md-overlay" role="dialog" aria-modal="true" aria-label="Menú de navegación">
         <div class="md-panel">
             <div class="md-head">
-                <span>GIGAHERTZ STORE</span>
+                <span>MANIAWORLD</span>
                 <button id="nmClose" class="md-close" title="Cerrar menú" aria-label="Cerrar menú">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>
@@ -2187,7 +2238,7 @@
                 </div>
 
                 <div class="pm-info">
-                    <span class="pm-kicker">GigaHertz Store</span>
+                    <span class="pm-kicker">MANIAWORLD</span>
                     <h3 class="pm-title" id="pmTitle"></h3>
                     <p class="pm-sub" id="pmSub"></p>
 
@@ -2291,7 +2342,7 @@
                         <span class="pm-badge">Combo</span>
                     </div>
                     <div class="pm-info">
-                        <span class="pm-kicker">GigaHertz Store</span>
+                        <span class="pm-kicker">MANIAWORLD</span>
                         <div class="cm-cpu">
                             <span class="cm-cpu1" id="cmCpu1"></span>
                             <span class="cm-cpu2" id="cmCpu2"></span>
@@ -2408,15 +2459,32 @@
         let horizDist, vertDist;
         let dprScale = Math.min(window.devicePixelRatio || 1, 2);
 
-        let glowIntensity = 1.0;
+        let glowIntensity = 2.0;
         let isRunning = true;
-        let currentMode = 'organic_zones';
+        let currentMode = 'pulse';
 
         let rafId = null;
         let heroVisible = true;
 
+        let isDark = document.documentElement.classList.contains('dark');
+        window.addEventListener('theme:change', (e) => {
+            isDark = !!(e.detail && e.detail.theme === 'dark');
+            baseDirty = true;
+            if (typeof buildStrokeColors === 'function') glowStroke = buildStrokeColors();
+        });
+        const CANVAS_BG = () => (isDark ? '#0F0A1E' : '#f4f5f7');
+        const CANVAS_LINE = () => (isDark ? '#2a2f3a' : '#dcdfe6');
+
+        /* Capa cacheada con la rejilla en reposo: evita repintar todos los
+           hexagonos cada frame. Cada frame solo se redibujan los hexagonos
+           encendidos (el pulso) sobre este fondo ya listo. */
+        const baseCanvas = document.createElement('canvas');
+        const baseCtx = baseCanvas.getContext('2d', { alpha: false });
+        let baseDirty = true;
+
         let ripples = [];
         let lastRippleTime = 0;
+        let idlePresented = false;
         const rippleInterval = 5000;
 
         const settingsToggle = document.getElementById('settingsToggle');
@@ -2566,39 +2634,63 @@
             
             ctx.scale(dprScale, dprScale);
             buildGlowSprites();
+            baseDirty = true;
         }
 
         window.addEventListener('resize', resizeCanvas);
 
-        function drawHexagon(x, y, radius, fillColor, strokeColor, lineWidth, shadowBlur = 0, shadowColor = '') {
-            ctx.beginPath();
+        function drawHexagon(c, x, y, radius, fillColor, strokeColor, lineWidth, shadowBlur = 0, shadowColor = '') {
+            c.beginPath();
             const r = radius;
-            ctx.moveTo(x + r, y);
-            ctx.lineTo(x + r * 0.5, y + r * 0.866);
-            ctx.lineTo(x - r * 0.5, y + r * 0.866);
-            ctx.lineTo(x - r, y);
-            ctx.lineTo(x - r * 0.5, y - r * 0.866);
-            ctx.lineTo(x + r * 0.5, y - r * 0.866);
-            ctx.closePath();
+            c.moveTo(x + r, y);
+            c.lineTo(x + r * 0.5, y + r * 0.866);
+            c.lineTo(x - r * 0.5, y + r * 0.866);
+            c.lineTo(x - r, y);
+            c.lineTo(x - r * 0.5, y - r * 0.866);
+            c.lineTo(x + r * 0.5, y - r * 0.866);
+            c.closePath();
 
-            ctx.fillStyle = fillColor;
-            ctx.fill();
+            c.fillStyle = fillColor;
+            c.fill();
 
             if (shadowBlur > 0.5) {
-                ctx.save();
-                ctx.shadowColor = shadowColor;
-                ctx.shadowBlur = shadowBlur;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-                ctx.strokeStyle = strokeColor;
-                ctx.lineWidth = lineWidth;
-                ctx.stroke();
-                ctx.restore();
+                c.save();
+                c.shadowColor = shadowColor;
+                c.shadowBlur = shadowBlur;
+                c.shadowOffsetX = 0;
+                c.shadowOffsetY = 0;
+                c.strokeStyle = strokeColor;
+                c.lineWidth = lineWidth;
+                c.stroke();
+                c.restore();
             } else {
-                ctx.strokeStyle = strokeColor;
-                ctx.lineWidth = lineWidth;
-                ctx.stroke();
+                c.strokeStyle = strokeColor;
+                c.lineWidth = lineWidth;
+                c.stroke();
             }
+        }
+
+        /* Rejilla en reposo -> canvas offscreen. Se reconstruye solo al
+           redimensionar o cambiar de tema, no en cada frame. */
+        function renderBase() {
+            const bw = Math.max(1, Math.round(width * dprScale));
+            const bh = Math.max(1, Math.round(height * dprScale));
+            if (baseCanvas.width !== bw) baseCanvas.width = bw;
+            if (baseCanvas.height !== bh) baseCanvas.height = bh;
+            baseCtx.setTransform(dprScale, 0, 0, dprScale, 0, 0);
+            baseCtx.fillStyle = CANVAS_BG();
+            baseCtx.fillRect(0, 0, width, height);
+
+            const cols = Math.ceil(width / horizDist) + 2;
+            const rows = Math.ceil(height / vertDist) + 2;
+            for (let row = -1; row < rows; row++) {
+                for (let col = -1; col < cols; col++) {
+                    const x = col * horizDist;
+                    const y = row * vertDist + (col % 2 === 0 ? 0 : vertDist / 2);
+                    drawHexagon(baseCtx, x, y, hexRadius - 1.2, CANVAS_BG(), CANVAS_LINE(), 1.5);
+                }
+            }
+            baseDirty = false;
         }
 
         // --- Glow sprites: SOLO halo de glow pre-renderizado por nivel ---
@@ -2608,7 +2700,22 @@
         // para blitearlo detras del trazo.
         const GLOW_LEVELS = 16;
         let glowSprites = [];
+        let glowStroke = [];
         let spriteSize = 0;
+
+        /* Colores de trazo por nivel de glow, precalculados para no crear
+           strings (y forzar GC) por cada hexagono encendido en cada frame. */
+        function buildStrokeColors() {
+            const out = [];
+            for (let b = 0; b < GLOW_LEVELS; b++) {
+                const f = (b + 0.5) / GLOW_LEVELS;
+                const rS = isDark ? Math.round(42 + f * 126) : Math.round(220 - f * 70);
+                const gS = isDark ? Math.round(47 + f * 38) : Math.round(223 - f * 180);
+                const bS = isDark ? Math.round(58 + f * 189) : Math.round(230 + f * 25);
+                out.push('rgb(' + rS + ', ' + gS + ', ' + bS + ')');
+            }
+            return out;
+        }
 
         function buildGlowSprites() {
             const blur = 22 * glowIntensity;
@@ -2616,12 +2723,15 @@
             spriteSize = Math.ceil(hexRadius * 2 + pad * 2);
             glowSprites = [];
             const r = hexRadius - 1.2;
+            /* El halo es puro desenfoque: se renderiza a menor densidad para
+               abaratar el blit por frame sin perdida visible (topado a 1.5). */
+            const spriteDpr = Math.min(dprScale, 1.5);
             for (let b = 0; b < GLOW_LEVELS; b++) {
                 const f = (b + 0.5) / GLOW_LEVELS;
                 const c = document.createElement('canvas');
-                c.width = c.height = Math.ceil(spriteSize * dprScale);
+                c.width = c.height = Math.ceil(spriteSize * spriteDpr);
                 const g = c.getContext('2d');
-                g.scale(dprScale, dprScale);
+                g.scale(spriteDpr, spriteDpr);
                 const cx = spriteSize / 2, cy = spriteSize / 2;
                 g.beginPath();
                 g.moveTo(cx + r, cy);
@@ -2638,6 +2748,7 @@
                 g.stroke();
                 glowSprites.push(c);
             }
+            glowStroke = buildStrokeColors();
         }
 
         // --- Loop con pausa fuera de viewport ---
@@ -2688,13 +2799,27 @@
                 }
             }
 
-            ctx.fillStyle = '#f4f5f7';
-            ctx.fillRect(0, 0, width, height);
+            // Modo pulse: si no hay ondas activas la escena es estatica.
+            // Se presenta el fondo una sola vez y se deja de dibujar hasta el
+            // proximo pulso (raf sigue vivo solo para detectar el disparo).
+            if (currentMode === 'pulse' && ripples.length === 0) {
+                if (!baseDirty && idlePresented) {
+                    rafId = requestAnimationFrame(animate);
+                    return;
+                }
+                idlePresented = true;
+            } else {
+                idlePresented = false;
+            }
+
+            if (baseDirty) renderBase();
+            ctx.drawImage(baseCanvas, 0, 0, width, height);
 
             const cols = Math.ceil(width / horizDist) + 2;
             const rows = Math.ceil(height / vertDist) + 2;
             const centerX = width / 2;
             const centerY = height / 2;
+            const bgColor = CANVAS_BG();
 
             for (let row = -1; row < rows; row++) {
                 for (let col = -1; col < cols; col++) {
@@ -2702,7 +2827,8 @@
                     const y = row * vertDist + (col % 2 === 0 ? 0 : vertDist / 2);
 
                     let factor = 0;
-                    const distFromCenter = Math.hypot(x - centerX, y - centerY);
+                    const _dcx = x - centerX, _dcy = y - centerY;
+                    const distFromCenter = Math.sqrt(_dcx * _dcx + _dcy * _dcy);
 
                     switch (currentMode) {
                         case 'pulse': {
@@ -2807,16 +2933,13 @@
 
                     factor = Math.min(1.0, Math.max(0, factor));
 
-                    if (factor < 0.02) {
-                        drawHexagon(x, y, hexRadius - 1.2, '#f4f5f7', '#dcdfe6', 1.5);
-                    } else {
-                        const b = Math.min(GLOW_LEVELS - 1, (factor * GLOW_LEVELS) | 0);
-                        ctx.drawImage(glowSprites[b], x - spriteSize / 2, y - spriteSize / 2, spriteSize, spriteSize);
-                        const rS = Math.round(220 - factor * 70);
-                        const gS = Math.round(223 - factor * 180);
-                        const bS = Math.round(230 + factor * 25);
-                        drawHexagon(x, y, hexRadius - 1.2, '#f4f5f7', `rgb(${rS}, ${gS}, ${bS})`, 1.5 + factor * 2.0);
-                    }
+                    // Los hexagonos apagados ya estan en la capa base: solo se
+                    // redibujan los que se encienden con el pulso.
+                    if (factor < 0.02) continue;
+
+                    const b = Math.min(GLOW_LEVELS - 1, (factor * GLOW_LEVELS) | 0);
+                    ctx.drawImage(glowSprites[b], x - spriteSize / 2, y - spriteSize / 2, spriteSize, spriteSize);
+                    drawHexagon(ctx, x, y, hexRadius - 1.2, bgColor, glowStroke[b], 1.5 + factor * 2.0);
                 }
             }
 
@@ -2912,9 +3035,7 @@
             function renderContent() {
                 pmImg.src = current.img;
                 pmImg.alt = current.alt || current.name;
-                pmCrumbCat.textContent = current.cat || '';
-                pmCrumbSub.textContent = current.subcat || '';
-                pmCrumbName.textContent = current.name;
+                renderCrumbs(current.cat, current.subcat, current.name);
                 pmTitle.textContent = current.name;
                 pmSub.textContent = current.sub;
                 if (current.badge) {
@@ -2924,9 +3045,9 @@
                     pmBadge.hidden = true;
                 }
                 pmDescText.innerHTML =
-                    '<p><strong>' + current.name + '</strong> — ' + current.sub + '. Seleccionado por el equipo técnico de GigaHertz Store y probado en banco de pruebas antes de salir a la venta, garantizando rendimiento estable, temperaturas controladas y compatibilidad verificada con los estándares actuales de la industria.</p>' +
+                    '<p><strong>' + current.name + '</strong> — ' + current.sub + '. Seleccionado por el equipo técnico de MANIAWORLD y probado en banco de pruebas antes de salir a la venta, garantizando rendimiento estable, temperaturas controladas y compatibilidad verificada con los estándares actuales de la industria.</p>' +
                     '<p>El producto se entrega nuevo y sellado de fábrica, con su empaque original, manuales, accesorios completos y certificados de cumplimiento. Incluye garantía de 12 meses por fallas de fabricación, asistencia técnica especializada para la instalación y configuración inicial, así como soporte postventa directo por WhatsApp con nuestro personal en zulia.</p>' +
-                    '<p>GigaHertz Store despacha a domicilio a toda Venezuela: zulia (24-48h), Valencia y Maracaibo (48-72h) y resto del país de 3 a 5 días hábiles. Aceptamos transferencia bancaria, Pago Móvil, Zelle, tarjetas de crédito y débito, así como pago contra entrega en zonas cubiertas. Consulta disponibilidad exacta, descuentos por cantidad y opciones de financiamiento antes de finalizar tu compra.</p>' +
+                    '<p>MANIAWORLD despacha a domicilio a toda Venezuela: zulia (24-48h), Valencia y Maracaibo (48-72h) y resto del país de 3 a 5 días hábiles. Aceptamos transferencia bancaria, Pago Móvil, Zelle, tarjetas de crédito y débito, así como pago contra entrega en zonas cubiertas. Consulta disponibilidad exacta, descuentos por cantidad y opciones de financiamiento antes de finalizar tu compra.</p>' +
                     '<p>¿Dudas sobre compatibilidad con tu equipo actual? Escríbenos antes de comprar y te asesoramos con la instalación, la actualización de firmware y las mejores alternativas de precio dentro del catálogo de la tienda.</p>';
                 const specs = [
                     ['Modelo', current.name],
@@ -2939,6 +3060,45 @@
                 pmSpecsList.innerHTML = specs.map(([k, v]) => '<div><dt>' + k + '</dt><dd>' + v + '</dd></div>').join('');
             }
 
+            const pmCrumbsEl = document.getElementById('pmCrumbs');
+            const pmCrumbSeps = pmCrumbsEl ? pmCrumbsEl.querySelectorAll('.pm-crumb-sep') : [];
+
+            function toggleCrumb(el, val, title) {
+                const link = !!val;
+                el.classList.toggle('is-link', link);
+                if (link) {
+                    el.setAttribute('role', 'button');
+                    el.setAttribute('tabindex', '0');
+                    el.setAttribute('title', title);
+                } else {
+                    el.removeAttribute('role');
+                    el.removeAttribute('tabindex');
+                    el.removeAttribute('title');
+                }
+            }
+
+            function renderCrumbs(cat, sub, name) {
+                pmCrumbCat.textContent = cat || '';
+                pmCrumbSub.textContent = sub || '';
+                pmCrumbName.textContent = name || '';
+                pmCrumbCat.hidden = !cat;
+                pmCrumbSub.hidden = !sub;
+                if (pmCrumbSeps[0]) pmCrumbSeps[0].hidden = !(cat && sub);
+                if (pmCrumbSeps[1]) pmCrumbSeps[1].hidden = !(cat || sub);
+                toggleCrumb(pmCrumbCat, cat, 'Ver productos de ' + cat);
+                toggleCrumb(pmCrumbSub, sub, 'Ver productos de ' + sub);
+            }
+
+            function goToCatalog(val, param) {
+                if (!val) return;
+                location.href = 'catalogo.html?' + param + '=' + encodeURIComponent(val);
+            }
+            pmCrumbCat.addEventListener('click', () => goToCatalog(current && current.cat, 'cat'));
+            pmCrumbSub.addEventListener('click', () => goToCatalog(current && current.subcat, 'sub'));
+            [pmCrumbCat, pmCrumbSub].forEach(el => el.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+            }));
+
             function resetAccordions() {
                 accSpecs.classList.add('is-open');
                 accSpecs.querySelector('.pm-acc-head').setAttribute('aria-expanded', 'true');
@@ -2949,7 +3109,7 @@
             function shareLinks() {
                 const base = location.href.split('#')[0];
                 const url = encodeURIComponent(base + '#' + encodeURIComponent(current.name));
-                const text = encodeURIComponent(current.name + ' — ' + current.sub + ' | GigaHertz Store');
+                const text = encodeURIComponent(current.name + ' — ' + current.sub + ' | MANIAWORLD');
                 return {
                     whatsapp: 'https://wa.me/?text=' + text + '%20' + url,
                     facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + url,
@@ -3469,7 +3629,7 @@
                 if (cmCrumbCat) cmCrumbCat.textContent = card.dataset.cat || 'Combos';
                 if (cmCrumbSub) cmCrumbSub.textContent = card.dataset.subcat || '';
                 if (cmCrumbName) cmCrumbName.textContent = name;
-                cmSub.textContent = meta.sub || 'Combo GigaHertz';
+                cmSub.textContent = meta.sub || 'Combo';
                 cmCpu1.textContent = card.querySelector('.combo-cpu-line1').textContent.trim();
                 cmCpu2.textContent = card.querySelector('.combo-cpu-line2').textContent.trim();
                 cmPrice.textContent = fmtUSD(parseFloat(card.dataset.price) || 0);

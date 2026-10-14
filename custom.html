@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armar tu PC - GigaHertz Store</title>
+    <title>Armar tu PC - MANIAWORLD</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="dark.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -482,7 +484,7 @@
 
     <!-- Page loader -->
     <div id="pageLoader" class="pl" aria-hidden="true">
-        <img src="logo.png" alt="GigaHertz Store" class="pl-logo" onerror="this.src='https://placehold.co/400x400/ffffff/7c3aed?text=GigaHertz'">
+        <img src="logo2.png" alt="MANIAWORLD" class="pl-logo" onerror="this.src='https://placehold.co/400x400/ffffff/7c3aed?text=GigaHertz'">
         <div class="pl-ring"></div>
     </div>
     <script>
@@ -511,7 +513,7 @@
     <nav class="fixed top-0 left-0 w-full h-16 z-30 flex items-center justify-between px-4 sm:px-8 border-b border-gray-200/40" style="background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 70%, rgba(255, 255, 255, 0)); backdrop-filter: blur(8px);">
         <div class="flex items-center space-x-8 flex-shrink-0">
             <a href="index.html" class="flex items-center space-x-2">
-                <span class="font-bold text-gray-900 tracking-wide text-sm sm:text-base">GIGAHERTZ STORE</span>
+                <span class="font-bold text-gray-900 tracking-wide text-sm sm:text-base">MANIAWORLD</span>
             </a>
         </div>
 
@@ -594,7 +596,7 @@
     <footer class="relative z-10 bg-white/85 backdrop-blur-md border-t border-purple-100 px-4 sm:px-8 pt-12 pb-8">
         <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <div>
-                <h4 class="text-gray-900 font-bold text-sm mb-3 flex items-center gap-2">GigaHertz Store</h4>
+                <h4 class="text-gray-900 font-bold text-sm mb-3 flex items-center gap-2">MANIAWORLD</h4>
                 <p class="text-xs text-gray-500 leading-relaxed">Tu tienda de confianza en tecnología, componentes de alta gama y equipos de computación en zulia, Venezuela.</p>
             </div>
             <div>
@@ -637,7 +639,7 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto pt-6 border-t border-purple-100 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400">
-            <p>&copy; 2026 GigaHertz Store. Todos los derechos reservados.</p>
+            <p>&copy; 2026 MANIAWORLD. Todos los derechos reservados.</p>
             <p class="mt-2 sm:mt-0 text-purple-500 font-medium">Armar PC</p>
         </div>
     </footer>
@@ -974,7 +976,7 @@
                 var total = items.reduce(function (s, p) { return s + p.price; }, 0);
                 window.GigaCart.add({
                     id: 'custom-' + Date.now(),
-                    name: 'PC a medida (GigaHertz) @ ' + items.map(function (p) { return p.short; }).join(' + '),
+                    name: 'PC a medida (3) @ ' + items.map(function (p) { return p.short; }).join(' + '),
                     price: total,
                     img: (picks.case ? picks.case.img : 'img/p-12.png')
                 });

@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubicación - GigaHertz Store</title>
+    <title>Ubicación - MANIAWORLD</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="dark.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.css" rel="stylesheet">
     <style>
@@ -146,7 +148,7 @@
 
     <!-- Page loader -->
     <div id="pageLoader" class="pl" aria-hidden="true">
-        <img src="logo.png" alt="GigaHertz Store" class="pl-logo" onerror="this.src='https://placehold.co/400x400/ffffff/7c3aed?text=GigaHertz'">
+        <img src="logo2.png" alt="MANIAWORLD" class="pl-logo" onerror="this.src='https://placehold.co/400x400/ffffff/7c3aed?text=GigaHertz'">
         <div class="pl-ring"></div>
     </div>
     <script>
@@ -175,7 +177,7 @@
     <nav class="fixed top-0 left-0 w-full h-16 z-30 flex items-center justify-between px-4 sm:px-8 border-b border-gray-200/40" style="background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 70%, rgba(255, 255, 255, 0) 100%); backdrop-filter: blur(8px);">
         <div class="flex items-center space-x-8 flex-shrink-0">
             <a href="index.html" class="flex items-center space-x-2">
-                <span class="font-bold text-gray-900 tracking-wide text-sm sm:text-base">GIGAHERTZ STORE</span>
+                <span class="font-bold text-gray-900 tracking-wide text-sm sm:text-base">MANIAWORLD</span>
             </a>
         </div>
 
@@ -285,7 +287,7 @@
             <div>
                 <h3 class="text-gray-900 font-bold text-lg mb-2 tracking-wide flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-purple-600"></span>
-                    GIGAHERTZ STORE
+                    MANIAWORLD
                 </h3>
                 <span class="block w-12 h-1 rounded-full bg-purple-500 mb-3"></span>
                 <p class="text-xs text-gray-500 leading-relaxed">Tu tienda de confianza en tecnología, componentes de alta gama y equipos de computación en zulia y toda Venezuela.</p>
@@ -330,7 +332,7 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto pt-6 border-t border-purple-100 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400">
-            <p>&copy; 2026 GigaHertz Store. Todos los derechos reservados.</p>
+            <p>&copy; 2026 MANIAWORLD. Todos los derechos reservados.</p>
             <p class="mt-2 sm:mt-0 text-purple-500 font-medium">Ubicación</p>
         </div>
     </footer>
@@ -398,7 +400,7 @@
                 marker = new maplibregl.Marker({ color: '#7c3aed' })
                     .setLngLat(storeCoord)
                     .setPopup(new maplibregl.Popup({ offset: 25 })
-                        .setHTML('<strong>GigaHertz Store</strong><br>zulia, Venezuela<br>Atención con cita previa'))
+                        .setHTML('<strong>MANIAWORLD</strong><br>zulia, Venezuela<br>Atención con cita previa'))
                     .addTo(map);
                 marker.togglePopup();
             });
